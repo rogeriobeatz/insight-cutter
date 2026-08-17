@@ -1,5 +1,6 @@
 import { Check, Loader2 } from "lucide-react";
 
+import { useT, type TranslationKey } from "@/i18n";
 import { cn } from "@/lib/utils";
 import type { ProcessingStep } from "@/types";
 
@@ -8,14 +9,15 @@ interface ProcessingStepRowProps {
   isLast?: boolean;
 }
 
-const STATUS_LABEL: Record<ProcessingStep["status"], string> = {
-  waiting: "Waiting",
-  processing: "Processing",
-  completed: "Completed",
-  failed: "Failed",
+const STATUS_KEY: Record<ProcessingStep["status"], TranslationKey> = {
+  waiting: "processing.status.waiting",
+  processing: "processing.status.processing",
+  completed: "processing.status.completed",
+  failed: "processing.status.failed",
 };
 
 export function ProcessingStepRow({ step, isLast = false }: ProcessingStepRowProps) {
+  const t = useT();
   const isActive = step.status === "processing";
   const isDone = step.status === "completed";
 
@@ -55,7 +57,7 @@ export function ProcessingStepRow({ step, isLast = false }: ProcessingStepRowPro
               isActive || isDone ? "text-foreground" : "text-muted-foreground",
             )}
           >
-            {step.label}
+            {t(`processing.step.${step.id}` as TranslationKey)}
           </span>
           <span
             className={cn(
@@ -63,7 +65,7 @@ export function ProcessingStepRow({ step, isLast = false }: ProcessingStepRowPro
               isActive ? "text-signal" : "text-muted-foreground",
             )}
           >
-            {isActive ? `${step.progress}%` : STATUS_LABEL[step.status]}
+            {isActive ? `${step.progress}%` : t(STATUS_KEY[step.status])}
           </span>
         </span>
 
