@@ -86,7 +86,7 @@ const clipSeeds: ClipSeed[] = [
     score: { hook: 88, clarity: 91, retention: 82, emotion: 74, shareability: 84, overall: 85 },
   },
   {
-    title: "O abismo de repertório que travа você",
+    title: "O abismo de repertório que trava você",
     excerpt:
       "Seu repertório cresce mais rápido que sua técnica, e é nesse abismo que a maioria desiste cedo...",
     inSec: 2740,
