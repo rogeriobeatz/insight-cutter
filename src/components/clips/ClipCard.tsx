@@ -91,7 +91,7 @@ export function ClipCard({ clip, onPreview, onDownload }: ClipCardProps) {
         <div className="mt-4 flex items-center gap-1.5 border-t border-border pt-3">
           <Button variant="ghost" size="sm" onClick={() => onPreview?.(clip)}>
             <Play className="h-3.5 w-3.5" />
-            Preview
+            {t("clips.preview")}
           </Button>
           <Button variant="secondary" size="sm" asChild>
             <Link to="/clips/$clipId" params={{ clipId: clip.id }}>
