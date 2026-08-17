@@ -9,22 +9,29 @@ import { EmptyState } from "@/components/shell/EmptyState";
 import { TopBar } from "@/components/shell/TopBar";
 import { Button } from "@/components/ui/button";
 import { useProcessingSimulation } from "@/hooks/useProcessingSimulation";
+import { useT } from "@/i18n";
 import { formatDuration, formatTimecode } from "@/lib/timecode";
 import { completeProject, getProject } from "@/services/inpoint.service";
 
 export const Route = createFileRoute("/projects/$projectId/processing")({
   head: () => ({
     meta: [
-      { title: "Analyzing — INPOINT" },
-      { name: "description", content: "INPOINT is analyzing your video and finding key moments." },
-      { property: "og:title", content: "Analyzing — INPOINT" },
-      { property: "og:description", content: "Finding the strongest moments in your video." },
+      { title: "Analisando — INPOINT" },
+      {
+        name: "description",
+        content: "O INPOINT está analisando seu vídeo e encontrando os melhores momentos.",
+      },
+      { property: "og:title", content: "Analisando — INPOINT" },
+      { property: "og:description", content: "Encontrando os momentos mais fortes do seu vídeo." },
     ],
   }),
   component: ProcessingPage,
 });
 
+const FOUND_CLIPS = 8;
+
 function ProcessingPage() {
+  const t = useT();
   const { projectId } = Route.useParams();
   const navigate = useNavigate();
   const { data: project, isPending } = useQuery({
@@ -33,20 +40,20 @@ function ProcessingPage() {
   });
 
   const [done, setDone] = useState(false);
-  const { job, headline, detail } = useProcessingSimulation({
+  const { job, headlineKey, detailKey } = useProcessingSimulation({
     projectId,
     startAt: project?.progress ?? 0,
     onComplete: () => setDone(true),
   });
 
   useEffect(() => {
-    if (done) void completeProject(projectId, 8);
+    if (done) void completeProject(projectId, FOUND_CLIPS);
   }, [done, projectId]);
 
   if (isPending) {
     return (
       <AppShell>
-        <TopBar eyebrow="Projects" title="Analyzing" />
+        <TopBar eyebrow={t("results.eyebrow")} title={t("processing.title")} />
       </AppShell>
     );
   }
@@ -54,13 +61,13 @@ function ProcessingPage() {
   if (!project) {
     return (
       <AppShell>
-        <TopBar eyebrow="Projects" title="Not found" />
+        <TopBar eyebrow={t("results.eyebrow")} title={t("common.notFound")} />
         <div className="mx-auto w-full max-w-3xl px-6 py-20">
           <EmptyState
-            title="This project no longer exists"
+            title={t("projects.gone.title")}
             action={
               <Button variant="signal" size="sm" asChild>
-                <Link to="/projects">Back to projects</Link>
+                <Link to="/projects">{t("projects.gone.action")}</Link>
               </Button>
             }
           />
@@ -72,7 +79,7 @@ function ProcessingPage() {
   return (
     <AppShell>
       <TopBar
-        eyebrow="Projects"
+        eyebrow={t("results.eyebrow")}
         title={project.title}
         actions={
           <span className="font-mono text-[0.7rem] uppercase tracking-[0.08em] text-signal tabular">
@@ -113,9 +120,12 @@ function ProcessingPage() {
 
             <div className="mt-8">
               <p className="font-mono text-4xl tabular text-foreground">{job.progress}%</p>
-              <p className="mt-3 text-sm text-foreground">{headline}</p>
-              <p key={detail} className="mt-1.5 animate-in fade-in text-xs text-muted-foreground duration-700">
-                {detail}
+              <p className="mt-3 text-sm text-foreground">{t(headlineKey)}</p>
+              <p
+                key={detailKey}
+                className="mt-1.5 animate-in fade-in text-xs text-muted-foreground duration-700"
+              >
+                {t(detailKey)}
               </p>
             </div>
           </div>
@@ -139,11 +149,11 @@ function ProcessingPage() {
               navigate({ to: "/projects/$projectId", params: { projectId: project.id } })
             }
           >
-            View results
+            {t("processing.viewResults")}
             <ArrowRight className="h-4 w-4" />
           </Button>
           <span className="font-mono text-[0.7rem] uppercase tracking-[0.08em] text-muted-foreground">
-            {done ? "8 moments found" : "You can leave this page — we'll keep working"}
+            {done ? t("processing.found", { count: FOUND_CLIPS }) : t("processing.leavePage")}
           </span>
         </div>
       </div>
