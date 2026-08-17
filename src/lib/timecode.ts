@@ -48,17 +48,33 @@ export function formatMinutes(totalSeconds: number): number {
   return Math.round(totalSeconds / 60);
 }
 
-export function formatRelativeDate(iso: string, now = new Date()): string {
+/**
+ * Relative date, localized through the translate function so no copy lives here.
+ */
+export function formatRelativeDate(
+  iso: string,
+  options: {
+    t: (key: "date.today" | "date.yesterday" | "date.daysAgo", vars?: Record<string, string | number>) => string;
+    intl: string;
+    now?: Date;
+  },
+): string {
+  const { t, intl, now = new Date() } = options;
   const date = new Date(iso);
   const diffDays = Math.floor((now.getTime() - date.getTime()) / 86_400_000);
-  if (diffDays <= 0) return "Today";
-  if (diffDays === 1) return "Yesterday";
-  if (diffDays < 7) return `${diffDays} days ago`;
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  if (diffDays <= 0) return t("date.today");
+  if (diffDays === 1) return t("date.yesterday");
+  if (diffDays < 7) return t("date.daysAgo", { count: diffDays });
+  return date.toLocaleDateString(intl, { month: "short", day: "numeric" });
 }
 
-export function greetingForHour(hour: number): string {
-  if (hour < 12) return "Good morning.";
-  if (hour < 18) return "Good afternoon.";
-  return "Good evening.";
+export type GreetingKey =
+  | "dashboard.greeting.morning"
+  | "dashboard.greeting.afternoon"
+  | "dashboard.greeting.evening";
+
+export function greetingKeyForHour(hour: number): GreetingKey {
+  if (hour < 12) return "dashboard.greeting.morning";
+  if (hour < 18) return "dashboard.greeting.afternoon";
+  return "dashboard.greeting.evening";
 }
