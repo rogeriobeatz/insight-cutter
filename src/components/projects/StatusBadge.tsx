@@ -1,3 +1,4 @@
+import { useT, type TranslationKey } from "@/i18n";
 import { cn } from "@/lib/utils";
 import type { ProjectStatus } from "@/types";
 
@@ -7,15 +8,17 @@ interface StatusBadgeProps {
   className?: string;
 }
 
-const LABELS: Record<ProjectStatus, string> = {
-  queued: "Queued",
-  processing: "Processing",
-  completed: "Completed",
-  failed: "Failed",
+const LABEL_KEYS: Record<ProjectStatus, TranslationKey> = {
+  queued: "projects.status.queued",
+  processing: "projects.status.processing",
+  completed: "projects.status.completed",
+  failed: "projects.status.failed",
 };
 
 export function StatusBadge({ status, progress = 0, className }: StatusBadgeProps) {
+  const t = useT();
   const isProcessing = status === "processing";
+  const label = t(LABEL_KEYS[status]);
 
   return (
     <span
@@ -35,7 +38,7 @@ export function StatusBadge({ status, progress = 0, className }: StatusBadgeProp
           status === "failed" && "bg-destructive",
         )}
       />
-      {isProcessing ? `${LABELS[status]} — ${Math.round(progress)}%` : LABELS[status]}
+      {isProcessing ? `${label} — ${Math.round(progress)}%` : label}
     </span>
   );
 }

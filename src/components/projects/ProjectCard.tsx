@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 import { StatusBadge } from "@/components/projects/StatusBadge";
+import { intlLocale, useI18n } from "@/i18n";
 import { formatDuration, formatRelativeDate } from "@/lib/timecode";
 import type { Project } from "@/types";
 
@@ -9,6 +10,7 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
+  const { t, locale } = useI18n();
   const isProcessing = project.status === "processing";
   const to = isProcessing ? "/projects/$projectId/processing" : "/projects/$projectId";
 
@@ -45,9 +47,15 @@ export function ProjectCard({ project }: ProjectCardProps) {
         <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[0.7rem] tabular text-muted-foreground">
           <span>{formatDuration(project.video.durationSec)}</span>
           <span className="text-border-strong">/</span>
-          <span>{isProcessing ? "Analyzing" : `${project.clipCount} clips`}</span>
+          <span>
+            {isProcessing
+              ? t("projects.analyzing")
+              : t("projects.clipsCount", { count: project.clipCount })}
+          </span>
           <span className="text-border-strong">/</span>
-          <span>{formatRelativeDate(project.createdAt)}</span>
+          <span>
+            {formatRelativeDate(project.createdAt, { t, intl: intlLocale(locale) })}
+          </span>
         </p>
       </div>
 

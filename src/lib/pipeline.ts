@@ -1,27 +1,19 @@
 import type { ProcessingStep, ProcessingStepId } from "@/types";
 
-export const PIPELINE_STEPS: Array<{ id: ProcessingStepId; label: string; weight: number }> = [
-  { id: "upload", label: "Uploading", weight: 12 },
-  { id: "transcribe", label: "Transcribing", weight: 24 },
-  { id: "understand", label: "Understanding content", weight: 22 },
-  { id: "moments", label: "Finding key moments", weight: 28 },
-  { id: "clips", label: "Creating clips", weight: 14 },
+/**
+ * Pipeline definition. Labels are not stored here — the UI resolves
+ * `processing.step.<id>` through the translation layer.
+ */
+export const PIPELINE_STEPS: Array<{ id: ProcessingStepId; weight: number }> = [
+  { id: "upload", weight: 12 },
+  { id: "transcribe", weight: 24 },
+  { id: "understand", weight: 22 },
+  { id: "moments", weight: 28 },
+  { id: "clips", weight: 14 },
 ];
 
-export const ANALYSIS_MESSAGES = [
-  "Analyzing hooks...",
-  "Identifying self-contained stories...",
-  "Scoring audience retention potential...",
-  "Finding strong conclusions...",
-];
-
-export const HEADLINE_BY_STEP: Record<ProcessingStepId, string> = {
-  upload: "Preparing your video...",
-  transcribe: "Turning speech into text...",
-  understand: "Reading through the conversation...",
-  moments: "Finding the strongest moments in your video...",
-  clips: "Cutting and framing your clips...",
-};
+/** Number of rotating analysis messages (`processing.detail.0..n`). */
+export const DETAIL_MESSAGE_COUNT = 4;
 
 /**
  * Derives per-step state from a single overall progress value (0–100).
@@ -37,7 +29,6 @@ export function buildSteps(progress: number): ProcessingStep[] {
       local >= 100 ? "completed" : local > 0 ? "processing" : "waiting";
     return {
       id: step.id,
-      label: step.label,
       status,
       progress: Math.max(0, Math.min(100, Math.round(local))),
     };

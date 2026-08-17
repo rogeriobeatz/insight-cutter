@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { useT } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 interface EmptyStateProps {
@@ -10,6 +11,8 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({ title, description, action, className }: EmptyStateProps) {
+  const t = useT();
+
   return (
     <div
       className={cn(
@@ -17,7 +20,7 @@ export function EmptyState({ title, description, action, className }: EmptyState
         className,
       )}
     >
-      <span className="label-mono text-muted-foreground">Nothing here yet</span>
+      <span className="label-mono text-muted-foreground">{t("common.nothingHere")}</span>
       <h3 className="mt-4 text-lg font-medium text-foreground">{title}</h3>
       {description ? (
         <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">{description}</p>

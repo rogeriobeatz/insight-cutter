@@ -2,6 +2,7 @@ import { useRef, useState, type DragEvent } from "react";
 import { FileVideo, Upload, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { useT } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 interface UploadDropzoneProps {
@@ -12,6 +13,7 @@ interface UploadDropzoneProps {
 const ACCEPT = ".mp4,.mov,.webm,video/mp4,video/quicktime,video/webm";
 
 export function UploadDropzone({ file, onFileChange }: UploadDropzoneProps) {
+  const t = useT();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isOver, setIsOver] = useState(false);
 
@@ -31,13 +33,13 @@ export function UploadDropzone({ file, onFileChange }: UploadDropzoneProps) {
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm text-foreground">{file.name}</span>
           <span className="mt-1 block font-mono text-[0.7rem] tabular text-muted-foreground">
-            {(file.size / 1_048_576).toFixed(1)} MB — ready to analyze
+            {(file.size / 1_048_576).toFixed(1)} MB — {t("new.dropzone.ready")}
           </span>
         </span>
         <Button
           variant="ghost"
           size="icon"
-          aria-label="Remove file"
+          aria-label={t("new.dropzone.remove")}
           onClick={() => onFileChange(null)}
         >
           <X className="h-4 w-4" />
@@ -76,13 +78,13 @@ export function UploadDropzone({ file, onFileChange }: UploadDropzoneProps) {
         <Upload className="h-5 w-5" />
       </span>
 
-      <p className="mt-6 text-base font-medium text-foreground">Drop your video here</p>
+      <p className="mt-6 text-base font-medium text-foreground">{t("new.dropzone.title")}</p>
       <p className="mt-1.5 font-mono text-[0.7rem] uppercase tracking-[0.08em] text-muted-foreground">
-        MP4, MOV or WEBM
+        {t("new.dropzone.formats")}
       </p>
 
       <Button variant="outline" size="sm" className="mt-6" onClick={() => inputRef.current?.click()}>
-        Choose file
+        {t("new.dropzone.choose")}
       </Button>
 
       <input

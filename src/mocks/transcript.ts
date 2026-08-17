@@ -6,16 +6,16 @@ import type { TranscriptSegment } from "@/types";
  */
 export function buildMockTranscript(startSec: number): TranscriptSegment[] {
   const lines: Array<[string, string]> = [
-    ["Speaker 1", "You eventually realize that getting better at software"],
-    ["Speaker 1", "doesn't necessarily make you a better designer."],
-    ["Speaker 1", "The tools stop being the bottleneck pretty early."],
-    ["Speaker 2", "So what becomes the bottleneck after that?"],
-    ["Speaker 1", "Judgement. Knowing which problem is actually worth solving."],
-    ["Speaker 1", "That's the part nobody teaches you in a tutorial."],
-    ["Speaker 2", "And that's where most people plateau."],
-    ["Speaker 1", "Exactly. They keep sharpening a skill that already works."],
-    ["Speaker 1", "The growth is in the decisions, not the execution."],
-    ["Speaker 2", "That reframes the whole career question."],
+    ["Convidado", "Uma hora você percebe que dominar a ferramenta"],
+    ["Convidado", "não te torna, necessariamente, um criador melhor."],
+    ["Convidado", "As ferramentas param de ser o gargalo bem cedo."],
+    ["Apresentador", "E o que passa a ser o gargalo depois disso?"],
+    ["Convidado", "Julgamento. Saber qual problema vale a pena resolver."],
+    ["Convidado", "Essa é a parte que nenhum tutorial ensina."],
+    ["Apresentador", "E é aí que a maioria estaciona."],
+    ["Convidado", "Exato. Continuam afiando uma habilidade que já funciona."],
+    ["Convidado", "O crescimento está nas decisões, não na execução."],
+    ["Apresentador", "Isso muda toda a conversa sobre carreira."],
   ];
 
   let cursor = startSec;

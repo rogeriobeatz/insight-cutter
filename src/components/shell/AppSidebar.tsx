@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
+  CreditCard,
   Gauge,
   Home,
   LayoutTemplate,
@@ -12,25 +13,28 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 import { Wordmark } from "@/components/brand/Wordmark";
+import { LanguageSwitcher } from "@/components/shell/LanguageSwitcher";
+import { useT, type TranslationKey } from "@/i18n";
 import { cn } from "@/lib/utils";
 import type { User } from "@/types";
 
 interface NavItem {
-  label: string;
+  labelKey: TranslationKey;
   to: string;
   icon: LucideIcon;
 }
 
 const primaryNav: NavItem[] = [
-  { label: "Home", to: "/", icon: Home },
-  { label: "Projects", to: "/projects", icon: SquarePlay },
-  { label: "Clips", to: "/clips", icon: Scissors },
-  { label: "Templates", to: "/templates", icon: LayoutTemplate },
+  { labelKey: "nav.home", to: "/", icon: Home },
+  { labelKey: "nav.projects", to: "/projects", icon: SquarePlay },
+  { labelKey: "nav.clips", to: "/clips", icon: Scissors },
+  { labelKey: "nav.templates", to: "/templates", icon: LayoutTemplate },
 ];
 
 const secondaryNav: NavItem[] = [
-  { label: "Usage", to: "/usage", icon: Gauge },
-  { label: "Settings", to: "/settings", icon: Settings },
+  { labelKey: "nav.pricing", to: "/pricing", icon: CreditCard },
+  { labelKey: "nav.usage", to: "/usage", icon: Gauge },
+  { labelKey: "nav.settings", to: "/settings", icon: Settings },
 ];
 
 interface AppSidebarProps {
@@ -41,6 +45,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ user, collapsed, onToggle }: AppSidebarProps) {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const t = useT();
 
   const isActive = (to: string) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
 
@@ -57,7 +62,7 @@ export function AppSidebar({ user, collapsed, onToggle }: AppSidebarProps) {
           collapsed ? "justify-center px-2" : "justify-between px-5",
         )}
       >
-        <Link to="/" className="flex items-center" aria-label="INPOINT home">
+        <Link to="/" className="flex items-center" aria-label={t("nav.homeAria")}>
           {collapsed ? <Wordmark compact /> : <Wordmark variant="bracket" />}
         </Link>
         {!collapsed ? (
@@ -65,7 +70,7 @@ export function AppSidebar({ user, collapsed, onToggle }: AppSidebarProps) {
             type="button"
             onClick={onToggle}
             className="text-muted-foreground transition-colors hover:text-foreground"
-            aria-label="Collapse sidebar"
+            aria-label={t("nav.collapse")}
           >
             <PanelLeftClose className="h-4 w-4" />
           </button>
@@ -77,7 +82,7 @@ export function AppSidebar({ user, collapsed, onToggle }: AppSidebarProps) {
           type="button"
           onClick={onToggle}
           className="mx-auto mt-3 text-muted-foreground transition-colors hover:text-foreground"
-          aria-label="Expand sidebar"
+          aria-label={t("nav.expand")}
         >
           <PanelLeftOpen className="h-4 w-4" />
         </button>
@@ -93,6 +98,10 @@ export function AppSidebar({ user, collapsed, onToggle }: AppSidebarProps) {
         {secondaryNav.map((item) => (
           <SidebarLink key={item.to} item={item} active={isActive(item.to)} collapsed={collapsed} />
         ))}
+
+        <div className="mt-3 border-t border-border pt-3">
+          <LanguageSwitcher collapsed={collapsed} />
+        </div>
 
         <div
           className={cn(
@@ -130,10 +139,13 @@ function SidebarLink({
   active: boolean;
   collapsed: boolean;
 }) {
+  const t = useT();
+  const label = t(item.labelKey);
+
   return (
     <Link
       to={item.to}
-      title={collapsed ? item.label : undefined}
+      title={collapsed ? label : undefined}
       className={cn(
         "group relative flex items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors",
         collapsed && "justify-center px-0",
@@ -146,7 +158,7 @@ function SidebarLink({
         <span className="absolute left-0 top-1/2 h-4 w-[2px] -translate-y-1/2 bg-signal" />
       ) : null}
       <item.icon className="h-4 w-4 shrink-0" />
-      {!collapsed ? <span className="truncate">{item.label}</span> : null}
+      {!collapsed ? <span className="truncate">{label}</span> : null}
     </Link>
   );
 }

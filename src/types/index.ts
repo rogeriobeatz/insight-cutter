@@ -127,7 +127,6 @@ export type ProcessingStepStatus =
 
 export interface ProcessingStep {
   id: ProcessingStepId;
-  label: string;
   status: ProcessingStepStatus;
   /** 0–100 for the individual step. */
   progress: number;

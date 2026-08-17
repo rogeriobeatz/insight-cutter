@@ -14,6 +14,7 @@ import { EmptyState } from "@/components/shell/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useClipEditor } from "@/hooks/useClipEditor";
+import { useT } from "@/i18n";
 import { formatShortDuration, formatTimecode } from "@/lib/timecode";
 import { getClip } from "@/services/inpoint.service";
 import type { Clip } from "@/types";
@@ -21,16 +22,20 @@ import type { Clip } from "@/types";
 export const Route = createFileRoute("/clips/$clipId")({
   head: () => ({
     meta: [
-      { title: "Clip editor — INPOINT" },
-      { name: "description", content: "Trim, caption and reframe your clip before exporting." },
-      { property: "og:title", content: "Clip editor — INPOINT" },
-      { property: "og:description", content: "Trim, caption and reframe your clip." },
+      { title: "Editor de cortes — INPOINT" },
+      {
+        name: "description",
+        content: "Ajuste corte, legendas e enquadramento antes de exportar seu clipe.",
+      },
+      { property: "og:title", content: "Editor de cortes — INPOINT" },
+      { property: "og:description", content: "Ajuste corte, legendas e enquadramento." },
     ],
   }),
   component: ClipEditorPage,
 });
 
 function ClipEditorPage() {
+  const t = useT();
   const { clipId } = Route.useParams();
   const { data: clip, isPending } = useQuery({
     queryKey: ["clip", clipId],
@@ -46,10 +51,10 @@ function ClipEditorPage() {
       <AppShell>
         <div className="mx-auto w-full max-w-3xl px-6 py-20">
           <EmptyState
-            title="Clip not found"
+            title={t("clips.notFound")}
             action={
               <Button variant="signal" size="sm" asChild>
-                <Link to="/clips">Back to clips</Link>
+                <Link to="/clips">{t("clips.backToClips")}</Link>
               </Button>
             }
           />
@@ -62,6 +67,7 @@ function ClipEditorPage() {
 }
 
 function ClipEditor({ clip }: { clip: Clip }) {
+  const t = useT();
   const editor = useClipEditor(clip);
   const padding = 6;
 
@@ -70,11 +76,11 @@ function ClipEditor({ clip }: { clip: Clip }) {
       {/* Small screens: the editor needs room to work. */}
       <div className="flex flex-1 items-center justify-center px-6 lg:hidden">
         <EmptyState
-          title="Best experienced on desktop"
-          description="The clip editor needs a wider screen. Open INPOINT on a desktop to trim, caption and reframe."
+          title={t("editor.desktopOnly.title")}
+          description={t("editor.desktopOnly.description")}
           action={
             <Button variant="outline" size="sm" asChild>
-              <Link to="/clips">Back to clips</Link>
+              <Link to="/clips">{t("clips.backToClips")}</Link>
             </Button>
           }
           className="border-border"
@@ -87,7 +93,7 @@ function ClipEditor({ clip }: { clip: Clip }) {
             <Button variant="ghost" size="sm" asChild>
               <Link to="/projects/$projectId" params={{ projectId: clip.projectId }}>
                 <ArrowLeft className="h-4 w-4" />
-                Back
+                {t("common.back")}
               </Link>
             </Button>
             <span className="h-5 w-px bg-border" />
@@ -107,18 +113,18 @@ function ClipEditor({ clip }: { clip: Clip }) {
               size="sm"
               onClick={() => {
                 editor.markSaved();
-                toast.success("Clip saved");
+                toast.success(t("editor.saved"));
               }}
             >
-              Save
+              {t("common.save")}
             </Button>
             <Button
               variant="signal"
               size="sm"
-              onClick={() => toast.success("Export queued — 1080×1920")}
+              onClick={() => toast.success(t("editor.exportQueued"))}
             >
               <Upload className="h-4 w-4" />
-              Export
+              {t("common.export")}
             </Button>
           </div>
         </header>
@@ -136,7 +142,7 @@ function ClipEditor({ clip }: { clip: Clip }) {
                   <Button
                     variant="outline"
                     size="icon"
-                    aria-label={editor.isPlaying ? "Pause" : "Play"}
+                    aria-label={editor.isPlaying ? t("editor.pause") : t("editor.play")}
                     onClick={editor.togglePlay}
                   >
                     {editor.isPlaying ? (
@@ -170,13 +176,13 @@ function ClipEditor({ clip }: { clip: Clip }) {
             <Tabs defaultValue="captions" className="flex min-h-0 flex-1 flex-col">
               <TabsList className="h-auto w-full justify-start gap-1 rounded-none border-b border-border bg-transparent p-2">
                 <TabsTrigger value="captions" className="rounded-sm text-xs">
-                  Captions
+                  {t("editor.tab.captions")}
                 </TabsTrigger>
                 <TabsTrigger value="layout" className="rounded-sm text-xs">
                   Layout
                 </TabsTrigger>
                 <TabsTrigger value="transcript" className="rounded-sm text-xs">
-                  Transcript
+                  {t("editor.tab.transcript")}
                 </TabsTrigger>
               </TabsList>
 

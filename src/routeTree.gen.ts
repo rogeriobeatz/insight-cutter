@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as TemplatesRouteImport } from './routes/templates'
 import { Route as UsageRouteImport } from './routes/usage'
@@ -23,6 +24,11 @@ import { Route as ProjectsProjectIdProcessingRouteImport } from './routes/projec
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -74,6 +80,7 @@ const ProjectsProjectIdProcessingRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/pricing': typeof PricingRoute
   '/settings': typeof SettingsRoute
   '/templates': typeof TemplatesRoute
   '/usage': typeof UsageRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/pricing': typeof PricingRoute
   '/settings': typeof SettingsRoute
   '/templates': typeof TemplatesRoute
   '/usage': typeof UsageRoute
@@ -99,6 +107,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/pricing': typeof PricingRoute
   '/settings': typeof SettingsRoute
   '/templates': typeof TemplatesRoute
   '/usage': typeof UsageRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/pricing'
     | '/settings'
     | '/templates'
     | '/usage'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/pricing'
     | '/settings'
     | '/templates'
     | '/usage'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/pricing'
     | '/settings'
     | '/templates'
     | '/usage'
@@ -150,6 +162,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PricingRoute: typeof PricingRoute
   SettingsRoute: typeof SettingsRoute
   TemplatesRoute: typeof TemplatesRoute
   UsageRoute: typeof UsageRoute
@@ -168,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -238,6 +258,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PricingRoute: PricingRoute,
   SettingsRoute: SettingsRoute,
   TemplatesRoute: TemplatesRoute,
   UsageRoute: UsageRoute,
