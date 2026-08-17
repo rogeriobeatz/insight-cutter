@@ -10,33 +10,155 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as TemplatesRouteImport } from './routes/templates'
+import { Route as UsageRouteImport } from './routes/usage'
+import { Route as ClipsIndexRouteImport } from './routes/clips.index'
+import { Route as ClipsClipIdRouteImport } from './routes/clips.$clipId'
+import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
+import { Route as ProjectsNewRouteImport } from './routes/projects.new'
+import { Route as ProjectsProjectIdIndexRouteImport } from './routes/projects.$projectId.index'
+import { Route as ProjectsProjectIdProcessingRouteImport } from './routes/projects.$projectId.processing'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TemplatesRoute = TemplatesRouteImport.update({
+  id: '/templates',
+  path: '/templates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsageRoute = UsageRouteImport.update({
+  id: '/usage',
+  path: '/usage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClipsIndexRoute = ClipsIndexRouteImport.update({
+  id: '/clips/',
+  path: '/clips/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClipsClipIdRoute = ClipsClipIdRouteImport.update({
+  id: '/clips/$clipId',
+  path: '/clips/$clipId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsNewRoute = ProjectsNewRouteImport.update({
+  id: '/projects/new',
+  path: '/projects/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsProjectIdIndexRoute = ProjectsProjectIdIndexRouteImport.update({
+  id: '/projects/$projectId/',
+  path: '/projects/$projectId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsProjectIdProcessingRoute =
+  ProjectsProjectIdProcessingRouteImport.update({
+    id: '/projects/$projectId/processing',
+    path: '/projects/$projectId/processing',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/settings': typeof SettingsRoute
+  '/templates': typeof TemplatesRoute
+  '/usage': typeof UsageRoute
+  '/clips/$clipId': typeof ClipsClipIdRoute
+  '/projects/new': typeof ProjectsNewRoute
+  '/clips/': typeof ClipsIndexRoute
+  '/projects/': typeof ProjectsIndexRoute
+  '/projects/$projectId/processing': typeof ProjectsProjectIdProcessingRoute
+  '/projects/$projectId/': typeof ProjectsProjectIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/settings': typeof SettingsRoute
+  '/templates': typeof TemplatesRoute
+  '/usage': typeof UsageRoute
+  '/clips/$clipId': typeof ClipsClipIdRoute
+  '/projects/new': typeof ProjectsNewRoute
+  '/clips': typeof ClipsIndexRoute
+  '/projects': typeof ProjectsIndexRoute
+  '/projects/$projectId/processing': typeof ProjectsProjectIdProcessingRoute
+  '/projects/$projectId': typeof ProjectsProjectIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/settings': typeof SettingsRoute
+  '/templates': typeof TemplatesRoute
+  '/usage': typeof UsageRoute
+  '/clips/$clipId': typeof ClipsClipIdRoute
+  '/projects/new': typeof ProjectsNewRoute
+  '/clips/': typeof ClipsIndexRoute
+  '/projects/': typeof ProjectsIndexRoute
+  '/projects/$projectId/processing': typeof ProjectsProjectIdProcessingRoute
+  '/projects/$projectId/': typeof ProjectsProjectIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/settings'
+    | '/templates'
+    | '/usage'
+    | '/clips/$clipId'
+    | '/projects/new'
+    | '/clips/'
+    | '/projects/'
+    | '/projects/$projectId/processing'
+    | '/projects/$projectId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/settings'
+    | '/templates'
+    | '/usage'
+    | '/clips/$clipId'
+    | '/projects/new'
+    | '/clips'
+    | '/projects'
+    | '/projects/$projectId/processing'
+    | '/projects/$projectId'
+  id:
+    | '__root__'
+    | '/'
+    | '/settings'
+    | '/templates'
+    | '/usage'
+    | '/clips/$clipId'
+    | '/projects/new'
+    | '/clips/'
+    | '/projects/'
+    | '/projects/$projectId/processing'
+    | '/projects/$projectId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SettingsRoute: typeof SettingsRoute
+  TemplatesRoute: typeof TemplatesRoute
+  UsageRoute: typeof UsageRoute
+  ClipsClipIdRoute: typeof ClipsClipIdRoute
+  ProjectsNewRoute: typeof ProjectsNewRoute
+  ClipsIndexRoute: typeof ClipsIndexRoute
+  ProjectsIndexRoute: typeof ProjectsIndexRoute
+  ProjectsProjectIdProcessingRoute: typeof ProjectsProjectIdProcessingRoute
+  ProjectsProjectIdIndexRoute: typeof ProjectsProjectIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +170,83 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/templates': {
+      id: '/templates'
+      path: '/templates'
+      fullPath: '/templates'
+      preLoaderRoute: typeof TemplatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/usage': {
+      id: '/usage'
+      path: '/usage'
+      fullPath: '/usage'
+      preLoaderRoute: typeof UsageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clips/': {
+      id: '/clips/'
+      path: '/clips'
+      fullPath: '/clips/'
+      preLoaderRoute: typeof ClipsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clips/$clipId': {
+      id: '/clips/$clipId'
+      path: '/clips/$clipId'
+      fullPath: '/clips/$clipId'
+      preLoaderRoute: typeof ClipsClipIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/': {
+      id: '/projects/'
+      path: '/projects'
+      fullPath: '/projects/'
+      preLoaderRoute: typeof ProjectsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/new': {
+      id: '/projects/new'
+      path: '/projects/new'
+      fullPath: '/projects/new'
+      preLoaderRoute: typeof ProjectsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/$projectId/': {
+      id: '/projects/$projectId/'
+      path: '/projects/$projectId'
+      fullPath: '/projects/$projectId/'
+      preLoaderRoute: typeof ProjectsProjectIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/$projectId/processing': {
+      id: '/projects/$projectId/processing'
+      path: '/projects/$projectId/processing'
+      fullPath: '/projects/$projectId/processing'
+      preLoaderRoute: typeof ProjectsProjectIdProcessingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SettingsRoute: SettingsRoute,
+  TemplatesRoute: TemplatesRoute,
+  UsageRoute: UsageRoute,
+  ClipsClipIdRoute: ClipsClipIdRoute,
+  ProjectsNewRoute: ProjectsNewRoute,
+  ClipsIndexRoute: ClipsIndexRoute,
+  ProjectsIndexRoute: ProjectsIndexRoute,
+  ProjectsProjectIdProcessingRoute: ProjectsProjectIdProcessingRoute,
+  ProjectsProjectIdIndexRoute: ProjectsProjectIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
