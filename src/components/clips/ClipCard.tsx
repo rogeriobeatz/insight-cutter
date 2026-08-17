@@ -3,6 +3,7 @@ import { Download, Play, Scissors } from "lucide-react";
 
 import { ViralityScore } from "@/components/clips/ViralityScore";
 import { Button } from "@/components/ui/button";
+import { useT } from "@/i18n";
 import { isHighScore } from "@/lib/scoring";
 import { formatRange, formatShortDuration } from "@/lib/timecode";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,7 @@ interface ClipCardProps {
 }
 
 export function ClipCard({ clip, onPreview, onDownload }: ClipCardProps) {
+  const t = useT();
   const high = isHighScore(clip.score.overall);
 
   return (
@@ -53,7 +55,7 @@ export function ClipCard({ clip, onPreview, onDownload }: ClipCardProps) {
         <button
           type="button"
           onClick={() => onPreview?.(clip)}
-          aria-label={`Preview ${clip.title}`}
+          aria-label={t("clips.previewOf", { title: clip.title })}
           className="absolute inset-0 flex items-center justify-center bg-background/40 opacity-0 transition-opacity hover:opacity-100 focus-visible:opacity-100"
         >
           <span className="flex h-11 w-11 items-center justify-center rounded-full border border-signal bg-background/80 text-signal">
@@ -94,14 +96,14 @@ export function ClipCard({ clip, onPreview, onDownload }: ClipCardProps) {
           <Button variant="secondary" size="sm" asChild>
             <Link to="/clips/$clipId" params={{ clipId: clip.id }}>
               <Scissors className="h-3.5 w-3.5" />
-              Edit
+              {t("clips.edit")}
             </Link>
           </Button>
           <Button
             variant="ghost"
             size="icon"
             className="ml-auto h-8 w-8"
-            aria-label="Download clip"
+            aria-label={t("clips.download")}
             onClick={() => onDownload?.(clip)}
           >
             <Download className="h-3.5 w-3.5" />
