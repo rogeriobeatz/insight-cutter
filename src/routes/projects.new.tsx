@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Link2, Loader2, Sparkle } from "lucide-react";
+import { ArrowLeft, ChevronDown, Loader2, Sparkle, Youtube } from "lucide-react";
 
 import { OptionRow } from "@/components/editor/OptionRow";
 import { SegmentButton } from "@/components/editor/CaptionControls";
@@ -9,45 +9,55 @@ import { AppShell } from "@/components/shell/AppShell";
 import { TopBar } from "@/components/shell/TopBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useT, type TranslationKey } from "@/i18n";
+import { cn } from "@/lib/utils";
 import { createProject } from "@/services/inpoint.service";
 import type { ClipLengthPreset, ContentType } from "@/types";
 
 export const Route = createFileRoute("/projects/new")({
   head: () => ({
     meta: [
-      { title: "New project — INPOINT" },
+      { title: "Novo projeto — INPOINT" },
       {
         name: "description",
-        content: "Upload a video or paste a YouTube link and let INPOINT find the moments.",
+        content:
+          "Cole o link de um vídeo do YouTube e deixe o INPOINT encontrar os cortes com maior potencial viral.",
       },
-      { property: "og:title", content: "New project — INPOINT" },
-      { property: "og:description", content: "Upload a video and find the moments." },
+      { property: "og:title", content: "Novo projeto — INPOINT" },
+      { property: "og:description", content: "Cole um link e encontre os momentos." },
     ],
   }),
   component: NewProjectPage,
 });
 
-const LANGUAGES = ["Auto-detect", "English", "Portuguese", "Spanish"];
-
-const CLIP_LENGTHS: Array<{ value: ClipLengthPreset; label: string }> = [
-  { value: "auto", label: "Auto" },
-  { value: "30-60", label: "30–60 sec" },
-  { value: "60-90", label: "60–90 sec" },
+const LANGUAGES: Array<{ value: string; labelKey: TranslationKey }> = [
+  { value: "auto", labelKey: "new.language.auto" },
+  { value: "pt", labelKey: "new.language.pt" },
+  { value: "en", labelKey: "new.language.en" },
+  { value: "es", labelKey: "new.language.es" },
 ];
 
-const CONTENT_TYPES: Array<{ value: ContentType; label: string }> = [
-  { value: "podcast", label: "Podcast" },
-  { value: "interview", label: "Interview" },
-  { value: "educational", label: "Educational" },
-  { value: "business", label: "Business" },
-  { value: "other", label: "Other" },
+const CLIP_LENGTHS: Array<{ value: ClipLengthPreset; labelKey: TranslationKey }> = [
+  { value: "auto", labelKey: "new.clipLength.auto" },
+  { value: "30-60", labelKey: "new.clipLength.30-60" },
+  { value: "60-90", labelKey: "new.clipLength.60-90" },
+];
+
+const CONTENT_TYPES: Array<{ value: ContentType; labelKey: TranslationKey }> = [
+  { value: "podcast", labelKey: "new.contentType.podcast" },
+  { value: "interview", labelKey: "new.contentType.interview" },
+  { value: "educational", labelKey: "new.contentType.educational" },
+  { value: "business", labelKey: "new.contentType.business" },
+  { value: "other", labelKey: "new.contentType.other" },
 ];
 
 function NewProjectPage() {
+  const t = useT();
   const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
+  const [showUpload, setShowUpload] = useState(false);
   const [youtubeUrl, setYoutubeUrl] = useState("");
-  const [language, setLanguage] = useState(LANGUAGES[0]!);
+  const [language, setLanguage] = useState("auto");
   const [clipLength, setClipLength] = useState<ClipLengthPreset>("auto");
   const [contentType, setContentType] = useState<ContentType>("podcast");
   const [submitting, setSubmitting] = useState(false);
@@ -70,72 +80,92 @@ function NewProjectPage() {
   return (
     <AppShell>
       <TopBar
-        eyebrow="Projects"
-        title="New project"
+        eyebrow={t("new.eyebrow")}
+        title={t("common.newProject")}
         actions={
           <Button variant="ghost" size="sm" asChild>
             <Link to="/">
               <ArrowLeft className="h-4 w-4" />
-              Back
+              {t("common.back")}
             </Link>
           </Button>
         }
       />
 
       <div className="mx-auto w-full max-w-3xl px-6 py-14 md:px-10">
-        <h1 className="text-3xl font-medium tracking-tight text-foreground">
-          Create a new project
-        </h1>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Drop in a long-form video. INPOINT reads the whole thing and returns the moments worth
-          cutting.
-        </p>
+        <h1 className="text-3xl font-medium tracking-tight text-foreground">{t("new.title")}</h1>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t("new.subtitle")}</p>
 
-        <div className="mt-10">
-          <UploadDropzone file={file} onFileChange={setFile} />
-        </div>
-
-        <div className="my-7 flex items-center gap-4">
-          <span className="h-px flex-1 bg-border" />
-          <span className="label-mono text-muted-foreground">or</span>
-          <span className="h-px flex-1 bg-border" />
-        </div>
-
-        <div>
-          <label
-            htmlFor="youtube"
-            className="label-mono mb-2 block text-muted-foreground"
-          >
-            Paste a YouTube link
+        {/* Primary path: paste a YouTube link. */}
+        <div className="mt-10 border border-border-strong bg-card p-6 md:p-8">
+          <label htmlFor="youtube" className="label-mono mb-3 flex items-center gap-2 text-signal">
+            <Youtube className="h-3.5 w-3.5" />
+            {t("new.youtube.label")}
           </label>
-          <div className="relative">
-            <Link2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <div className="flex flex-col gap-3 sm:flex-row">
             <Input
               id="youtube"
               value={youtubeUrl}
               onChange={(event) => setYoutubeUrl(event.target.value)}
-              placeholder="https://youtube.com/watch?v=..."
-              className="h-11 rounded-sm border-border bg-card pl-9 font-mono text-sm placeholder:text-muted-foreground/70"
+              placeholder={t("new.youtube.placeholder")}
+              className="h-12 flex-1 rounded-sm border-border bg-background font-mono text-sm placeholder:text-muted-foreground/70"
             />
+            <Button
+              variant="signal"
+              size="lg"
+              className="h-12 shrink-0"
+              disabled={!canSubmit || submitting}
+              onClick={handleAnalyze}
+            >
+              {submitting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Sparkle className="h-4 w-4" />
+              )}
+              {t("new.analyze")}
+            </Button>
           </div>
+          <p className="mt-3 font-mono text-[0.7rem] text-muted-foreground">
+            {t("new.youtube.hint")}
+          </p>
+        </div>
+
+        {/* Secondary path: file upload, collapsed by default. */}
+        <div className="mt-6">
+          <button
+            type="button"
+            onClick={() => setShowUpload((value) => !value)}
+            className="inline-flex items-center gap-1.5 font-mono text-[0.7rem] uppercase tracking-[0.08em] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ChevronDown
+              className={cn("h-3.5 w-3.5 transition-transform", showUpload && "rotate-180")}
+            />
+            {showUpload ? t("new.upload.hide") : t("new.upload.toggle")}
+          </button>
+
+          {showUpload ? (
+            <div className="mt-4">
+              <UploadDropzone file={file} onFileChange={setFile} />
+            </div>
+          ) : null}
         </div>
 
         <div className="mt-12 grid gap-8 border-t border-border pt-10 md:grid-cols-2">
-          <OptionRow label="Language">
+          <OptionRow label={t("new.language")}>
             <div className="flex flex-wrap gap-1">
               {LANGUAGES.map((item) => (
                 <SegmentButton
-                  key={item}
-                  active={language === item}
-                  onClick={() => setLanguage(item)}
+                  key={item.value}
+                  active={language === item.value}
+                  onClick={() => setLanguage(item.value)}
                 >
-                  {item}
+                  {t(item.labelKey)}
                 </SegmentButton>
               ))}
             </div>
           </OptionRow>
 
-          <OptionRow label="Clip length">
+          <OptionRow label={t("new.clipLength")}>
             <div className="flex flex-wrap gap-1">
               {CLIP_LENGTHS.map((item) => (
                 <SegmentButton
@@ -143,13 +173,13 @@ function NewProjectPage() {
                   active={clipLength === item.value}
                   onClick={() => setClipLength(item.value)}
                 >
-                  {item.label}
+                  {t(item.labelKey)}
                 </SegmentButton>
               ))}
             </div>
           </OptionRow>
 
-          <OptionRow label="Content type">
+          <OptionRow label={t("new.contentType")}>
             <div className="flex flex-wrap gap-1">
               {CONTENT_TYPES.map((item) => (
                 <SegmentButton
@@ -157,7 +187,7 @@ function NewProjectPage() {
                   active={contentType === item.value}
                   onClick={() => setContentType(item.value)}
                 >
-                  {item.label}
+                  {t(item.labelKey)}
                 </SegmentButton>
               ))}
             </div>
@@ -165,17 +195,22 @@ function NewProjectPage() {
         </div>
 
         <div className="mt-12 flex items-center gap-4">
-          <Button variant="signal" size="lg" disabled={!canSubmit || submitting} onClick={handleAnalyze}>
+          <Button
+            variant="signal"
+            size="lg"
+            disabled={!canSubmit || submitting}
+            onClick={handleAnalyze}
+          >
             {submitting ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <Sparkle className="h-4 w-4" />
             )}
-            Analyze video
+            {t("new.analyze")}
           </Button>
           {!canSubmit ? (
             <span className="font-mono text-[0.7rem] uppercase tracking-[0.08em] text-muted-foreground">
-              Add a file or link to continue
+              {t("new.needInput")}
             </span>
           ) : null}
         </div>
