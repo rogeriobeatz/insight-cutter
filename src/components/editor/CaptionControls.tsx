@@ -1,5 +1,6 @@
 import { OptionRow } from "@/components/editor/OptionRow";
 import { Slider } from "@/components/ui/slider";
+import { useT, type TranslationKey } from "@/i18n";
 import { cn } from "@/lib/utils";
 import type { CaptionSettings, CaptionStyle } from "@/types";
 
@@ -8,28 +9,34 @@ interface CaptionControlsProps {
   onChange: (patch: Partial<CaptionSettings>) => void;
 }
 
-const STYLES: Array<{ value: CaptionStyle; label: string }> = [
-  { value: "minimal", label: "Minimal" },
-  { value: "bold", label: "Bold" },
-  { value: "karaoke", label: "Karaoke" },
+const STYLES: Array<{ value: CaptionStyle; labelKey: TranslationKey }> = [
+  { value: "minimal", labelKey: "captions.style.minimal" },
+  { value: "bold", labelKey: "captions.style.bold" },
+  { value: "karaoke", labelKey: "captions.style.karaoke" },
 ];
 
-const POSITIONS: Array<{ value: CaptionSettings["position"]; label: string }> = [
-  { value: "top", label: "Top" },
-  { value: "center", label: "Center" },
-  { value: "bottom", label: "Bottom" },
+const POSITIONS: Array<{ value: CaptionSettings["position"]; labelKey: TranslationKey }> = [
+  { value: "top", labelKey: "captions.position.top" },
+  { value: "center", labelKey: "captions.position.center" },
+  { value: "bottom", labelKey: "captions.position.bottom" },
 ];
 
-const HIGHLIGHTS: Array<{ value: string; label: string; className: string }> = [
-  { value: "signal", label: "Signal", className: "bg-signal" },
-  { value: "white", label: "White", className: "bg-foreground" },
-  { value: "graphite", label: "Graphite", className: "bg-elevated border border-border-strong" },
+const HIGHLIGHTS: Array<{ value: string; labelKey: TranslationKey; className: string }> = [
+  { value: "signal", labelKey: "captions.highlight.signal", className: "bg-signal" },
+  { value: "white", labelKey: "captions.highlight.white", className: "bg-foreground" },
+  {
+    value: "graphite",
+    labelKey: "captions.highlight.graphite",
+    className: "bg-elevated border border-border-strong",
+  },
 ];
 
 export function CaptionControls({ captions, onChange }: CaptionControlsProps) {
+  const t = useT();
+
   return (
     <div className="space-y-6">
-      <OptionRow label="Style">
+      <OptionRow label={t("captions.style")}>
         <div className="grid grid-cols-3 gap-1">
           {STYLES.map((style) => (
             <SegmentButton
@@ -37,13 +44,13 @@ export function CaptionControls({ captions, onChange }: CaptionControlsProps) {
               active={captions.style === style.value}
               onClick={() => onChange({ style: style.value })}
             >
-              {style.label}
+              {t(style.labelKey)}
             </SegmentButton>
           ))}
         </div>
       </OptionRow>
 
-      <OptionRow label="Font size" value={`${captions.fontSize}px`}>
+      <OptionRow label={t("captions.fontSize")} value={`${captions.fontSize}px`}>
         <Slider
           value={[captions.fontSize]}
           min={24}
@@ -53,7 +60,7 @@ export function CaptionControls({ captions, onChange }: CaptionControlsProps) {
         />
       </OptionRow>
 
-      <OptionRow label="Position">
+      <OptionRow label={t("captions.position")}>
         <div className="grid grid-cols-3 gap-1">
           {POSITIONS.map((position) => (
             <SegmentButton
@@ -61,19 +68,19 @@ export function CaptionControls({ captions, onChange }: CaptionControlsProps) {
               active={captions.position === position.value}
               onClick={() => onChange({ position: position.value })}
             >
-              {position.label}
+              {t(position.labelKey)}
             </SegmentButton>
           ))}
         </div>
       </OptionRow>
 
-      <OptionRow label="Highlight color">
+      <OptionRow label={t("captions.highlight")}>
         <div className="flex gap-2">
           {HIGHLIGHTS.map((color) => (
             <button
               key={color.value}
               type="button"
-              aria-label={color.label}
+              aria-label={t(color.labelKey)}
               onClick={() => onChange({ highlightColor: color.value })}
               className={cn(
                 "h-7 w-7 rounded-sm ring-offset-2 ring-offset-background transition-shadow",

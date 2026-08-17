@@ -1,3 +1,4 @@
+import { useT } from "@/i18n";
 import { cn } from "@/lib/utils";
 import type { UsageSummary } from "@/types";
 
@@ -8,6 +9,7 @@ interface UsageIndicatorProps {
 }
 
 export function UsageIndicator({ usage, variant = "panel", className }: UsageIndicatorProps) {
+  const t = useT();
   const ratio = Math.min(1, usage.minutesUsed / usage.minutesIncluded);
   const segments = 40;
   const filled = Math.round(ratio * segments);
@@ -19,7 +21,7 @@ export function UsageIndicator({ usage, variant = "panel", className }: UsageInd
           <div className="h-full bg-signal" style={{ width: `${ratio * 100}%` }} />
         </div>
         <span className="font-mono text-xs tabular text-muted-foreground">
-          {usage.minutesUsed}/{usage.minutesIncluded} min
+          {usage.minutesUsed}/{usage.minutesIncluded} {t("usage.minutesShort")}
         </span>
       </div>
     );
@@ -30,13 +32,15 @@ export function UsageIndicator({ usage, variant = "panel", className }: UsageInd
       <div className="flex items-baseline justify-between">
         <span className="label-mono text-muted-foreground">{usage.periodLabel}</span>
         <span className="label-mono text-muted-foreground">
-          {Math.round(ratio * 100)}% used
+          {Math.round(ratio * 100)}{t("usage.used")}
         </span>
       </div>
 
       <p className="mt-4 font-mono text-2xl tabular text-foreground">
         {usage.minutesUsed}
-        <span className="text-muted-foreground"> / {usage.minutesIncluded} minutes processed</span>
+        <span className="text-muted-foreground">
+          {" "}/ {usage.minutesIncluded} {t("usage.processed")}
+        </span>
       </p>
 
       <div className="mt-5 flex items-end gap-[3px]" aria-hidden="true">
