@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { ANALYSIS_MESSAGES, activeStep, buildSteps, HEADLINE_BY_STEP } from "@/lib/pipeline";
+import type { TranslationKey } from "@/i18n";
+import { activeStep, buildSteps, DETAIL_MESSAGE_COUNT } from "@/lib/pipeline";
 import type { ProcessingJob } from "@/types";
 
 interface Options {
@@ -9,6 +10,14 @@ interface Options {
   durationMs?: number;
   startAt?: number;
   onComplete?: () => void;
+}
+
+interface Result {
+  job: ProcessingJob;
+  /** Translation key for the current pipeline headline. */
+  headlineKey: TranslationKey;
+  /** Translation key for the rotating analysis microcopy. */
+  detailKey: TranslationKey;
 }
 
 /**
@@ -20,7 +29,7 @@ export function useProcessingSimulation({
   durationMs = 14_000,
   startAt = 0,
   onComplete,
-}: Options): { job: ProcessingJob; headline: string; detail: string } {
+}: Options): Result {
   const [progress, setProgress] = useState(startAt);
   const [messageIndex, setMessageIndex] = useState(0);
   const [startedAt] = useState(() => new Date().toISOString());
@@ -41,29 +50,38 @@ export function useProcessingSimulation({
 
   useEffect(() => {
     const timer = window.setInterval(() => {
-      setMessageIndex((index) => (index + 1) % ANALYSIS_MESSAGES.length);
+      setMessageIndex((index) => (index + 1) % DETAIL_MESSAGE_COUNT);
     }, 2600);
     return () => window.clearInterval(timer);
   }, []);
 
-  const job = useMemo<ProcessingJob>(() => {
-    const steps = buildSteps(progress);
-    const current = activeStep(steps);
-    return {
+  const headlineKey = useMemo<TranslationKey>(() => {
+    const current = activeStep(buildSteps(progress));
+    return (
+      current && progress < 100
+        ? (`processing.headline.${current.id}` as TranslationKey)
+        : "processing.headline.done"
+    );
+  }, [progress]);
+
+  const job = useMemo<ProcessingJob>(
+    () => ({
       id: `job-${projectId}`,
       projectId,
       status: progress >= 100 ? "completed" : "running",
       progress: Math.round(progress),
-      steps,
-      message: current ? HEADLINE_BY_STEP[current.id] : "Done.",
+      steps: buildSteps(progress),
+      /** Translation key — the UI resolves it. */
+      message: headlineKey,
       startedAt,
       finishedAt: progress >= 100 ? new Date().toISOString() : undefined,
-    };
-  }, [progress, projectId, startedAt]);
+    }),
+    [progress, projectId, startedAt, headlineKey],
+  );
 
   return {
     job,
-    headline: job.message,
-    detail: ANALYSIS_MESSAGES[messageIndex]!,
+    headlineKey,
+    detailKey: `processing.detail.${messageIndex}` as TranslationKey,
   };
 }
